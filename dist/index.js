@@ -3541,6 +3541,7 @@ function run() {
                     core.setFailed(`This action only supports pull requests and pushes, ${github_1.context.eventName} events are not supported. ` +
                         "Please submit an issue on this action's GitHub repo if you believe this in correct.");
             }
+            base = 'master';
             // Log the base and head commits
             core.info(`Base commit: ${base}`);
             core.info(`Head commit: ${head}`);
