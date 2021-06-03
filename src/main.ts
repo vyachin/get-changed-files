@@ -9,6 +9,7 @@ async function run(): Promise<void> {
     // Create GitHub client with the API token.
     const client = new GitHub(core.getInput('token', {required: true}))
     const format = core.getInput('format', {required: true}) as Format
+    const base = core.getInput('branch', {required: true})
 
     // Ensure that the format parameter is set properly.
     if (format !== 'space-delimited' && format !== 'csv' && format !== 'json') {
@@ -21,17 +22,14 @@ async function run(): Promise<void> {
     // Get event name.
     const eventName = context.eventName
 
-    // Define the base and head commits to be extracted from the payload.
-    let base: string | undefined
+    // Define the head commits to be extracted from the payload.
     let head: string | undefined
 
     switch (eventName) {
       case 'pull_request':
-        base = context.payload.pull_request?.base?.sha
         head = context.payload.pull_request?.head?.sha
         break
       case 'push':
-        base = context.payload.before
         head = context.payload.after
         break
       default:
@@ -40,7 +38,6 @@ async function run(): Promise<void> {
             "Please submit an issue on this action's GitHub repo if you believe this in correct."
         )
     }
-    base = 'master'
 
     // Log the base and head commits
     core.info(`Base commit: ${base}`)
@@ -54,7 +51,6 @@ async function run(): Promise<void> {
       )
 
       // To satisfy TypeScript, even though this is unreachable.
-      base = ''
       head = ''
     }
 

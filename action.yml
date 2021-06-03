@@ -20,6 +20,11 @@ inputs:
       Can be 'space-delimited', 'csv', or 'json'.
     required: true
     default: space-delimited
+  branch:
+    description: >
+      Base branch name.
+    required: true
+    default: master
 outputs:
   all:
     description: >

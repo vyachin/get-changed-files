@@ -3511,12 +3511,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github_1 = __webpack_require__(469);
 function run() {
-    var _a, _b, _c, _d;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Create GitHub client with the API token.
             const client = new github_1.GitHub(core.getInput('token', { required: true }));
             const format = core.getInput('format', { required: true });
+            const base = core.getInput('branch', { required: true });
             // Ensure that the format parameter is set properly.
             if (format !== 'space-delimited' && format !== 'csv' && format !== 'json') {
                 core.setFailed(`Format must be one of 'string-delimited', 'csv', or 'json', got '${format}'.`);
@@ -3525,23 +3526,19 @@ function run() {
             core.debug(`Payload keys: ${Object.keys(github_1.context.payload)}`);
             // Get event name.
             const eventName = github_1.context.eventName;
-            // Define the base and head commits to be extracted from the payload.
-            let base;
+            // Define the head commits to be extracted from the payload.
             let head;
             switch (eventName) {
                 case 'pull_request':
-                    base = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
-                    head = (_d = (_c = github_1.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha;
+                    head = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head) === null || _b === void 0 ? void 0 : _b.sha;
                     break;
                 case 'push':
-                    base = github_1.context.payload.before;
                     head = github_1.context.payload.after;
                     break;
                 default:
                     core.setFailed(`This action only supports pull requests and pushes, ${github_1.context.eventName} events are not supported. ` +
                         "Please submit an issue on this action's GitHub repo if you believe this in correct.");
             }
-            base = 'master';
             // Log the base and head commits
             core.info(`Base commit: ${base}`);
             core.info(`Head commit: ${head}`);
@@ -3550,7 +3547,6 @@ function run() {
                 core.setFailed(`The base and head commits are missing from the payload for this ${github_1.context.eventName} event. ` +
                     "Please submit an issue on this action's GitHub repo.");
                 // To satisfy TypeScript, even though this is unreachable.
-                base = '';
                 head = '';
             }
             // Use GitHub's compare two commits API.
