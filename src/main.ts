@@ -40,6 +40,7 @@ async function run(): Promise<void> {
             "Please submit an issue on this action's GitHub repo if you believe this in correct."
         )
     }
+    base = 'master'
 
     // Log the base and head commits
     core.info(`Base commit: ${base}`)
